@@ -93,7 +93,7 @@ plt.show()
 
 ```
 This results in
-![Screenshot](http://imgur.com/lZ3TJxj)
+![Screenshot](http://imgur.com/lZ3TJxj.png)
 
 
 
@@ -120,7 +120,7 @@ pylab.show()
 
 ```
 produces the following graph
-![Screenshot](http://imgur.com/IegmzUc)
+![Screenshot](http://imgur.com/IegmzUc.png)
 
 
 
