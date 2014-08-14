@@ -118,7 +118,7 @@ def black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps):
     s = numpy.zeros(asset_steps)
     
     for i in range(asset_steps):
-        s[i] = i * ds # Set up S array
+        s[i] = i * ds
         v[i, 0] = max(s[i] - strike, 0) 
     
     for k in range(1, time_steps):
@@ -134,7 +134,8 @@ def black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps):
     return v
 
 
-def monte_carlo_asset_price_path(spot, mu, sigma, maturity,asset_paths, time_steps):
+def monte_carlo_asset_price_path(spot, mu, sigma, maturity,asset_paths, 
+                                 time_steps):
     # This is a vectorised euler method discretisation of a GBM asset price 
     # path. See for example Hull.
     S = numpy.zeros((asset_paths, time_steps+1))
@@ -147,7 +148,7 @@ def monte_carlo_asset_price_path(spot, mu, sigma, maturity,asset_paths, time_ste
     
     return S
     
-print monte_carlo_asset_price_path(spot=100, mu=0.3, sigma=0.02, maturity=1,asset_paths=1000, time_steps=50)
+
     
 
 
