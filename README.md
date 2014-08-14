@@ -69,6 +69,7 @@ prices,and time steps in the rows and columns, and option prices in the entries.
 large as possible whilst ensuring stability. This function can be used to study the option surface. For example using the 
 [matplotlib](http://matplotlib.org/) package we can create the call option surface with the following code:
 ```
+import finance
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 result = finance.black_scholes_european_call_3d(0.2, 0.05, 100, 1.0, 20)
