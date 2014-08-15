@@ -148,7 +148,8 @@ which when plotted using the following code
 import finance
 import pylab
 
-simulation = finance.monte_carlo_asset_price_path(spot=100, mu=0.05, sigma=0.3, time_horizon=1.0, asset_paths=1000, time_steps=50)
+simulation = finance.monte_carlo_asset_price_path(spot=100, mu=0.05, sigma=0.3, 
+                    time_horizon=1.0, asset_paths=1000, time_steps=50)
 
 
 pylab.plot(numpy.linspace(0,1,50+1), numpy.percentile(simulation, 95, axis = 0))
