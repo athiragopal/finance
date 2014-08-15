@@ -1,9 +1,9 @@
 # Finance
 
 
-Finance is a python module for calculations in quantitative finance. It includes
+Finance is a python module for calculations in mathematical finance. It includes
 * Numerical integration algorithms
-* An implementation of the Black-Scholes European option pricing results and numerical approximations
+* An implementation of the Black-Scholes european option pricing results and numerical approximation algorithms
 * A geometric brownian motion simulator
 
 # Using Finance
@@ -16,64 +16,93 @@ Finance is a python module for calculations in quantitative finance. It includes
   3. [geometric brownian motion simulator](## geometric brownian motion simulator) 
 
 # Installation
-Finance can be installed by placing finance.py in the same directory as the main python script.This module depends on
+Finance can be installed by placing finance.py in the same directory as the main python script.  This module depends on
 on both the [Numpy](http://www.numpy.org/) and [Scipy](http://www.scipy.org/) packages.
 
 ## numerical integration
 
-Finance includes four one-dimensional numerical integration algorithms. It includes the trapezium rule, Simpson's Rule, a
-monte-carlo integration These are implemented as `trapezoidal_rule(function, a, b, n)`, `simpsons_rule(function, a, b, n)`,
+Finance includes four one-dimensional numerical integration algorithms. It includes the trapezoidal rule, Simpson's Rule, and
+monte-carlo integration algorithm. These are implemented as `trapezoidal_rule(function, a, b, n)`, `simpsons_rule(function, a, b, n)`,
 and`crude_monte_carlo(function, a, b, n)`, 
 
-Simpson's Rule and the Trapezium rule may be used in the following way.
+Simpson's Rule and the trapezoidal rule may be used in the following way.
 ```
-print trapezoidal_rule(lambda x:x**2, 0, 1, 20)
+>>> print finance.trapezoidal_rule(lambda x:x**2, 0, 1, 20)
 >>> 0.33375
 ```
-where `a` and `b` are the bounds of integration, and `n` is an integer number of strips to use in the approximations.
+where:
+* `function` is the integrand of the definite integral
+* `a` and `b` are the bounds of integration
+* `n` is an integer number of strips to use in the approximations.
 
-The Monte-Carlo integration algorithm is invoked in a similar way.
+It returns a `float` which approximates the area under the integrand.
+
+The monte-carlo integration algorithm is invoked in a similar way.
 ```
-crude_monte_carlo(lambda x:x**2, 0, 1, 1000)
+>>> print finance.crude_monte_carlo(lambda x:x**2, 0, 1, 1000)
 >>> 0.332749640773
 ```
 
-where `a` and `b` are the bounds of integration, and `n` is an integer number of pseudo-random samples to take.
+where: 
+* `function` is the integrand of the definite integral
+* `a` and `b` are the bounds of integration
+* `n` is an integer number of pseudo-random samples to take
+
+It returns a `float` which approximates the area under the integrand.
 
 ## Black-Scholes option pricing
 
 Finance includes several functions related to european vanilla call and put option pricing. The first is an exact 
 calculation of the vanilla call and put option prices. These is implemented in Finance as 
 `black_scholes_european_call_price(spot, strike, r, sigma, maturity)` and `black_scholes_european_put_price(spot, 
-strike, r, sigma, maturity)`. `spot` is the spot price of the option, `strike` is the price at which the holder of an 
-option may exercise, `r` is the risk-free interest rate, `sigma` is the volatility, and `maturity`, is the time at which
-the contract expires.
+strike, r, sigma, maturity)`.  
 
 The call and put pricing functions are called in an identical way.
 ```
->>> print black_scholes_european_call_price(100, 100, 0.05, 0.02, 1)
-4.88096669701
+>>> print finance.black_scholes_european_call_price(100, 100, 0.05, 0.02, 1)
+>>> 4.88096669701
 ```
+where:
+* `spot` is the spot price of the underlying asset
+* `strike` is the price at which the holder of an option may exercise
+* `r` is the risk-free interest rate
+* `sigma` is the volatility of the underlying asset
+* `maturity`, is the time at which the contract expires.
+
+It returns a `float` which is the analytical solution to the Black-Scholes partial differential equation. `None` is
+returned in the case of arbitrage opportunities.
+
 
 Finance provides monte-carlo estimations of the put and call prices by estimating the discounted expected payoff at
 maturity under a risk-neutral probability. In Finance these functions are `monte_carlo_european_call_price(spot, strike,
- r, sigma, maturity, n)` and `monte_carlo_european_put_price(spot, strike, r, sigma, maturity, n)`. Here `n` is the 
- integer number of simulations to perform. For example, the european call estimator is invoked as
+ r, sigma, maturity, n)` and `monte_carlo_european_put_price(spot, strike, r, sigma, maturity, n)`. For example, the european call estimator is invoked as
 ```
 >>> print finance.monte_carlo_european_call_price(100, 100, 0.05, 0.02, 1, 1000)
 4.75598195465
 ```
-A finite difference approximator to the Black-Scholes equation for a european call is included in finance as 
-`black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps)`. It returns an array containing spot 
-prices,and time steps in the rows and columns, and option prices in the entries. The time steps are hardcoded to be as 
-large as possible whilst ensuring stability. This function can be used to study the option surface. For example using the 
+
+where:
+* `n` is the integer number of simulations to perform
+
+It returns a `float` which estimates the analytical result of the Black-Scholes pricing formula.
+
+
+
+
+A finite difference approximation scheme to the Black-Scholes equation for a european call is included in finance as 
+`black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps)`. 
+
+
+
+It returns an `array` containing spot price,time step data, and the corresponding option value data. 
+
+The time steps are hardcoded to be as large as possible whilst ensuring stability. This function can be used to study the option surface. For example using the 
 [matplotlib](http://matplotlib.org/) package we can create the call option surface with the following code:
 ```
+import finance
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-result = finance.black_scholes_european_call_3d(0.2, 0.05, 100, 1.0, 20)
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+
 
 
 result = finance.black_scholes_european_call_3d(0.2, 0.05, 100, 1.0, 20)
@@ -98,17 +127,23 @@ This results in
 
 
 
-## Geometric Brownian Motion Simulator
+## geometric brownian motion simulator
 
-An vectorised euler algorithm for simulating asset prices using geometric brownian motion is included in Finance as
- `monte_carlo_asset_price_path(spot, mu, sigma, maturity, asset_paths, time_steps)`. `spot` is the spot price of the asset,
-  `mu` is the drift, `sigma` is the volatility, `maturity`, is the time at which the contract expires, `asset_paths` 
-  is the number of asset paths to simulated, and `time_steps` is the number of time steps in the discretisation. 
-  It returns an array `S` consisting of spot price and time step data. For example,
+A vectorised euler algorithm for simulating asset prices using geometric brownian motion is included in Finance as
+ `monte_carlo_asset_price_path(spot, mu, sigma, time_horizon, asset_paths, time_steps)`.
 
-```>>> simulation = finance.monte_carlo_asset_price_path(100, 0.05, 0.3, 1.0, 1000, 50)```
+where:
+* `asset_paths` is the number of asset paths to simulated
+* `time_steps` is the number of time steps in the discretisation
+* `time_horizon` is the time duration of the simulation
 
-Produces an array `simulation` which when plotted using the following code
+It returns an `array` containing time step data, and asset price data.
+
+
+
+
+
+which when plotted using the following code
 ```
 import finance
 import pylab
@@ -119,7 +154,7 @@ pylab.xlabel('time')
 pylab.show()
 
 ```
-produces the following graph
+produces
 ![Screenshot](http://imgur.com/IegmzUc)
 
 
