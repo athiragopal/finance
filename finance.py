@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  7 21:52:19 2014
-
 @author: josh
 """
 import numpy
@@ -10,11 +9,12 @@ import scipy.stats
 
 
 def trapezoidal_rule(function, a, b, n):
-    # The trapezoidal rule is a technique for approximating a definite integral by estimating the area under the graph
-    # of the integrand as a trapezoid.  For more information see http://en.wikipedia.org/wiki/Trapezoidal_rule. a and
-    # b are the integration bounds, and n is an integer number of strips to use.
+    """This function approximates a definite integral by estimating the area under the graph
+     of the integrand as a trapezoid. The arguments are as follows: function is the integrand, a and b are the
+     integration bounds, and n is an integer number of strips to use. Its return value answer is an approximation of the
+     definite integral of function."""
     answer = 0
-    # calculate the strip size 
+    # calculate the strip size
     h = float(b - a) / n
     assert type(n) == int
     # evaluate the endpoints
@@ -26,44 +26,39 @@ def trapezoidal_rule(function, a, b, n):
 
 
 def simpsons_rule(function, a, b, n):
-    # Simpson's rule is a method for approximating a definite integral by replacing the integrand with a polynomial
-    # that takes the same value as the integrand at the endpoints and the midpoint. This function is an implementation
-    # of the composite Simpson's rule. See http://en.wikipedia.org/wiki/Simpson's_rule for more information. a and b are
-    # the integration bounds, and n is the integer number of strips to use in the approximation.
+    """This function is an implementation of the composite Simpson's rule. The arguments are as follows: function is
+    the integrand, a and b are the integration bounds, and n is the integer number of strips to use in the
+    approximation. Its return value answer is an approximation of the definite integral of function."""
     answer = 0
     # calculate the strip size
     h = float(b - a) / (2 * n)
     assert type(n) == int
-    # evaluate the endpoints
     answer += function(a) + function(b)
     # evaluate the odd terms
     answer += sum([2 * function(a + (2 * k) * h) for k in xrange(1, n)])
     # evaluate the even terms
     answer += sum([4 * function(a + (2 * k - 1) * h) for k in xrange(1, n + 1)])
-    # multiply by the final factor
     answer *= h / 3
     return answer
 
 
 def crude_monte_carlo(function, a, b, n):
-    # The crude Monte Carlo approximation uses a discretisation of the average 
-    # value of a function formula from first year calculus.  Pseudo-random
-    # numbers are selected from a uniform distribution. For more information see
-    # http://en.wikipedia.org/wiki/Monte_Carlo_integration. a and b are the bounds of the integral and n is the integer
-    # number of samples.
+    """This function provides a numerical approximation to an integral using pseudo-random numbers. The arguments are
+    as follows: function is the integrand, a and b are the bounds of the integral and n is the integer number of
+    samples. Its return value answer is an approximation of the definite integral of function."""
     assert type(n) == int
     total = sum([function(scipy.random.uniform(a, b)) for k in xrange(n)])
-    answer = ( total / n) * (b - a)
+    answer = (total / n) * (b - a)
     return answer
 
 
 def black_scholes_european_call_price(spot, strike, r, sigma, maturity):
-    # The Black-Scholes option pricing formula provides an exact formula for the fair value of a european vanilla
-    # call option.  For a review of the Black-Scholes model see
-    # http://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model.  spot is the spot price of the underlying asset, strike
-    # is the strike price, r is the risk free interest rate, sigma is the volatility of the underlying asset, and
-    # maturity is the time to maturity.
-    if spot < 0:  # No arbitrage condition
+    """This function computes the Black-Scholes option price for the fair value of a european vanilla call option.
+    The arguments are as follows: spot is the spot price of the underlying asset, strike is the strike
+    price, r is the risk free interest rate, sigma is the volatility of the underlying asset, and maturity is the time
+    to maturity. Its return value answer is the exact fair value of the call option."""
+    # No arbitrage condition
+    if spot < 0:
         return None
     else:
         d_1 = ((math.log(spot / strike) + (r + sigma ** 2 / 2) * maturity)
@@ -75,9 +70,12 @@ def black_scholes_european_call_price(spot, strike, r, sigma, maturity):
 
 
 def black_scholes_european_put_price(spot, strike, r, sigma, maturity):
-    # The Put price can be calculated from the call price using put-call parity. More information may be found at
-    # http://en.wikipedia.org/wiki/Put%E2%80%93call_parity.
-    if spot < 0:  # No arbitrage condition
+    """This function computes the put price of a european vanilla put option. The arguments are as follows: spot is
+    the spot price of the underlying asset, strike is the strike price, r is the risk free interest rate, sigma is the
+    volatility of the underlying asset, and maturity is the time to maturity. Its return value answer is the exact
+    fair value of the put price."""
+    # No arbitrage condition
+    if spot < 0:
         return None
     else:
         d_1 = ((math.log(spot / strike) + (r + sigma ** 2 / 2) * maturity)
@@ -89,10 +87,13 @@ def black_scholes_european_put_price(spot, strike, r, sigma, maturity):
 
 
 def monte_carlo_european_call_price(spot, strike, r, sigma, maturity, n):
-    # This is a monte carlo simulation of a european call by estimating the
-    # discounted expected payoff of the option under a risk neutral 
-    # probability. See http://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model for more information.
-    if spot < 0:  # No arbitrage condition
+    """This function approximates the european vanilla call option price using a monte carlo approximation.
+    The arguments are as follows: spot is the spot price of the underlying asset, strike is the strike price, r is the
+    risk free interest rate, sigma is the volatility of the underlying asset, maturity is the time to maturity, and n
+    is the number of samples to take. Its return value answer is an approximation to the fair value price of the
+    call option."""
+    # No arbitrage condition
+    if spot < 0:
         return None
     else:
         s_factor = spot * math.exp(maturity * (r - 0.05 * sigma ** 2))
@@ -104,10 +105,12 @@ def monte_carlo_european_call_price(spot, strike, r, sigma, maturity, n):
 
 
 def monte_carlo_european_put_price(spot, strike, r, sigma, maturity, n):
-    # This is a monte carlo simulation of a european put by estimating the
-    # discounted expected payoff of the option under a risk neutral 
-    # probability. See http://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model for more information.
-    if spot < 0:  # No arbitrage condition
+    """This function approximates the european vanilla put option price using a monte carlo approximation.
+    The arguments are as follows: spot is the spot price of the underlying asset, strike is the strike price, r is the
+    risk free interest rate, sigma is the volatility of the underlying asset, maturity is the time to maturity, and n
+    is the number of samples to take. Its return value answer is an approximation to the fair value put price."""
+    # No arbitrage condition
+    if spot < 0:
         return None
     else:
         s_factor = spot * math.exp(maturity * (r - 0.05 * sigma ** 2))
@@ -119,6 +122,11 @@ def monte_carlo_european_put_price(spot, strike, r, sigma, maturity, n):
 
 
 def black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps):
+    """This function uses a finite difference method to compute solutions to the Black-Scholes partial
+    differential equation. The arguments are as follows: sigma is the volatility of the underlying asset, r is the risk
+    free interest rate, maturity is the time to maturity, and asset_steps controls the precision of the
+    approximation. It returns an array v containing spot price, time step data, and the corresponding option
+    value data."""
     ds = 2 * strike / asset_steps
     dt = 0.9 / (sigma ** 2 * asset_steps ** 2)
     time_steps = int(maturity / dt) + 1
@@ -143,13 +151,12 @@ def black_scholes_european_call_3d(sigma, r, strike, maturity, asset_steps):
     return v
 
 
-# noinspection PyNoneFunctionAssignment
 def monte_carlo_asset_price_path(spot, mu, sigma, time_horizon, asset_paths,
                                  time_steps):
-    # This function simulates the price of an asset undergoing a geometric brownian motion using a vectorised euler
-    # discretisation. See http://en.wikipedia.org/wiki/Geometric_Brownian_motion for a description of this process.
-    # spot is the spot price of the asset, mu is the drift, sigma is the volatility, T is the time horizon, asset_paths
-    # is the number of asset asset paths, and time_steps is the number of time steps.
+    """This function simulates the price of an asset undergoing a geometric brownian motion using a vectorised euler
+    discretisation. The arguments are as follows: spot is the spot price of the asset, mu is the drift, sigma is the
+    volatility, T is the time horizon, asset_paths is the number of asset asset paths, and time_steps is the number of
+    time steps. It returns an array s containing time step data, and asset price data."""
     s = numpy.zeros((asset_paths, time_steps + 1))
     dt = time_horizon / time_steps
     s[:, 0] = spot
@@ -157,7 +164,3 @@ def monte_carlo_asset_price_path(spot, mu, sigma, time_horizon, asset_paths,
     s[:, 1:] = numpy.exp((mu - 0.5 * sigma ** 2) * dt + epsilon * sigma * numpy.sqrt(dt))
     s = numpy.cumprod(s, axis=1)
     return s
-
-print black_scholes_european_call_price(100, 100, 0.05, 0.02, 1)
-
-
